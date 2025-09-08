@@ -1,0 +1,30 @@
+[flake8]
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    env,
+    .env,
+    .pytest_cache,
+    .coverage,
+    htmlcov,
+    dist,
+    build,
+    *.egg-info,
+    migrations,
+    node_modules,
+    .tox,
+    .mypy_cache,
+    .ruff_cache,
+    config,
+    manage.py
+
+max-line-length = 88
+extend-ignore = 
+    E203,  # whitespace before ':'
+    W503,  # line break before binary operator
+    E501   # line too long (handled by black)
+
+per-file-ignores =
+    __init__.py:F401
