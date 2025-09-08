@@ -28,7 +28,7 @@ RUN poetry config virtualenvs.create true && \
     fi && \
     rm -rf /root/.cache && \
     mkdir -p /app/src && \
-    mkdir -p /app/config && \
+    mkdir -p /app/config
 
 USER app
 
