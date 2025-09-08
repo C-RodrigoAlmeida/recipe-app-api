@@ -16,6 +16,7 @@ RUN pip install poetry && \
 WORKDIR /app
 
 COPY pyproject.toml poetry.lock ./
+COPY .flake8 ./
 COPY ./src ./src
 COPY ./config ./config
 
