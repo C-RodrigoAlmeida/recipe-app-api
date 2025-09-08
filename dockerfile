@@ -15,7 +15,7 @@ RUN pip install poetry && \
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./config/
+COPY pyproject.toml poetry.lock ./
 COPY ./src ./src
 COPY ./config ./config
 
@@ -34,4 +34,4 @@ USER app
 
 EXPOSE 8000
 
-CMD ["python", "src/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
