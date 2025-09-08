@@ -2,9 +2,15 @@ services:
   app:
     build:
       context: .
+      args:
+        - DEV=true
     ports:
       - "8000:8000"
     volumes:
-      - ./app:/app
+      - ./manage.py:/app/manage.py
+      - ./config:/app/config
+      - ./src:/app/src
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./poetry.lock:/app/poetry.lock
     command:
       sh -c "poetry run python manage.py runserver 0.0.0.0:8000"

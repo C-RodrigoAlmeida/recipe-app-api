@@ -1,45 +1,37 @@
 FROM python:3.12-slim
-LABEL maintainer="c.almeidarodrigo@gmail.com"
 
-ENV PYTHONUNBUFFERED 1
+LABEL maintainer="Rodrigo Almeida <c.almeidarodrigo@gmail.com>"
 
-# Install system dependencies and Poetry
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    libffi-dev \
-    libssl-dev \
-    curl \
-    build-essential \
-    && curl -sSL https://install.python-poetry.org | python3 - \
-    && chmod +x /root/.local/bin/poetry \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+ENV PYTHONUNBUFFERED=1 \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VENV_IN_PROJECT=1
 
-# Add Poetry to PATH
-ENV PATH="/root/.local/bin:$PATH"
+ARG DEV=false
 
-# Set working directory
+RUN pip install poetry && \
+    apt-get update && apt-get install -y --no-install-recommends build-essential && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd --create-home --shell /bin/bash app
+
 WORKDIR /app
 
-# Copy dependency files
-COPY ./pyproject.toml ./poetry.lock* /app/
+COPY pyproject.toml poetry.lock ./config/
+COPY ./src ./src
+COPY ./config ./config
 
-# Install dependencies using Poetry
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-dev --no-interaction --no-ansi \
-    && rm -rf /tmp/*
+RUN poetry config virtualenvs.create true && \
+    poetry config virtualenvs.in-project true && \
+    if [ "$DEV" = "true" ]; then \
+        poetry install --no-root; \
+    else \
+        poetry install --only=main --no-root; \
+    fi && \
+    rm -rf /root/.cache && \
+    mkdir -p /app/src && \
+    mkdir -p /app/config && \
 
-# Change ownership of app directory to django-user
-RUN chown -R django-user /app
+USER app
 
-# Copy application code
-COPY ./app /app
-
-# Expose port 8000 for the Django development server
 EXPOSE 8000
 
-# Switch to the django-user for better security
-USER django-user
-
-# Run the Django development server using Poetry
-CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "src/manage.py", "runserver", "0.0.0.0:8000"]
