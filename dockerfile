@@ -9,7 +9,10 @@ ENV PYTHONUNBUFFERED=1 \
 ARG DEV=false
 
 RUN pip install poetry && \
-    apt-get update && apt-get install -y --no-install-recommends build-essential && \
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        libpq-dev \
+        postgresql-client && \
     rm -rf /var/lib/apt/lists/* && \
     useradd --create-home --shell /bin/bash app
 
